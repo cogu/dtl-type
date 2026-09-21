@@ -91,16 +91,16 @@ void dtl_hv_set_cstr(dtl_hv_t *self, const char *key, dtl_dv_t *dv, bool auto_in
 {
    if (self != NULL)
    {
-      dtl_dv_t *current = (dtl_dv_t *) adt_hash_get(self->pAny, key);
-      if ((current != NULL) && (current != dv))
+      void **current = adt_hash_get(self->pAny, key);
+      if ((current != NULL) && (*current == dv))
       {
-         dtl_dv_dec_ref(current);
+         return;
       }
-      adt_hash_set(self->pAny, key, dv);
       if (auto_increment_ref)
       {
          dtl_dv_inc_ref(dv);
       }
+      adt_hash_set(self->pAny, key, dv);
    }
 }
 

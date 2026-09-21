@@ -34,6 +34,7 @@ static void test_dtl_hv_remove_cstr(CuTest *tc);
 static void test_dtl_hv_exists_cstr(CuTest *tc);
 static void test_dtl_hv_set_overwrite(CuTest *tc);
 static void test_dtl_hv_auto_increment_ref(CuTest *tc);
+static void test_dtl_hv_set_same_value(CuTest *tc);
 static void test_dtl_hv_null_safety(CuTest *tc);
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,6 +52,7 @@ CuSuite *testsuite_dtl_hv(void)
    SUITE_ADD_TEST(suite, test_dtl_hv_exists_cstr);
    SUITE_ADD_TEST(suite, test_dtl_hv_set_overwrite);
    SUITE_ADD_TEST(suite, test_dtl_hv_auto_increment_ref);
+   SUITE_ADD_TEST(suite, test_dtl_hv_set_same_value);
    SUITE_ADD_TEST(suite, test_dtl_hv_null_safety);
 
    return suite;
@@ -223,6 +225,25 @@ static void test_dtl_hv_auto_increment_ref(CuTest *tc)
    dtl_sv_t *val2 = dtl_sv_make_i32(100);
    dtl_hv_set_cstr(hv, "k2", (dtl_dv_t *) val2, false);
    CuAssertIntEquals(tc, 1, (int) dtl_ref_cnt(val2));
+
+   dtl_dec_ref(val);
+   dtl_dec_ref(hv);
+}
+
+static void test_dtl_hv_set_same_value(CuTest *tc)
+{
+   dtl_hv_t *hv = dtl_hv_new();
+   dtl_sv_t *val = dtl_sv_make_i32(42);
+
+   dtl_hv_set_cstr(hv, "key", (dtl_dv_t *) val, true);
+   CuAssertIntEquals(tc, 2, (int) dtl_ref_cnt(val));
+
+   // Setting same value again should be a no-op and preserve ref counts
+   dtl_hv_set_cstr(hv, "key", (dtl_dv_t *) val, true);
+   CuAssertIntEquals(tc, 2, (int) dtl_ref_cnt(val));
+
+   dtl_hv_set_cstr(hv, "key", (dtl_dv_t *) val, false);
+   CuAssertIntEquals(tc, 2, (int) dtl_ref_cnt(val));
 
    dtl_dec_ref(val);
    dtl_dec_ref(hv);
