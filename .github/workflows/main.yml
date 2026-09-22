@@ -7,20 +7,21 @@ on:
 jobs:
   build:
     name: build (${{ matrix.name }})
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - name: GCC
+            os: ubuntu-latest
             cc: gcc
             cxx: g++
           - name: Clang
+            os: ubuntu-latest
             cc: clang
             cxx: clang++
-    env:
-      CC: ${{ matrix.cc }}
-      CXX: ${{ matrix.cxx }}
+          - name: MSVC
+            os: windows-latest
 
     steps:
     - name: checkout adt
@@ -41,14 +42,23 @@ jobs:
       with:
         path: main
 
-    - name: configure
+    - name: configure (Linux)
+      if: runner.os != 'Windows'
+      run: cmake -S . -B build -DUNIT_TEST=ON
+      working-directory: main
+      env:
+        CC: ${{ matrix.cc }}
+        CXX: ${{ matrix.cxx }}
+
+    - name: configure (Windows)
+      if: runner.os == 'Windows'
       run: cmake -S . -B build -DUNIT_TEST=ON
       working-directory: main
 
     - name: build
-      run: cmake --build build --target dtl_type_unit
+      run: cmake --build build --target dtl_type_unit --config Debug
       working-directory: main
 
     - name: test
-      run: ctest --test-dir build --output-on-failure
+      run: ctest --test-dir build -C Debug --output-on-failure
       working-directory: main
