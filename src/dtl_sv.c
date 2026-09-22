@@ -1442,6 +1442,10 @@ static void dtl_sv_ztrim(char *str)
       }
       ++p;
    }
+   if (a == NULL)
+   {
+      return;
+   }
    p = end - 1;
    while (p > a)
    {
