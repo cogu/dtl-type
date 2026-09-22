@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "CuTest.h"
 #include "dtl_sv.h"
 #include "dtl_av.h"
@@ -40,6 +41,7 @@ static void test_dtl_sv_numeric_setters(CuTest *tc);
 static void test_dtl_sv_ptr_destructor(CuTest *tc);
 static void test_dtl_sv_dv_wrapper(CuTest *tc);
 static void test_dtl_sv_conversions(CuTest *tc);
+static void test_dtl_sv_non_finite_to_string(CuTest *tc);
 static void test_dtl_sv_lt_comparisons(CuTest *tc);
 static void test_dtl_sv_take_bytes(CuTest *tc);
 static void test_dtl_sv_vlt(CuTest *tc);
@@ -61,6 +63,7 @@ CuSuite *testsuite_dtl_sv(void)
    SUITE_ADD_TEST(suite, test_dtl_sv_ptr_destructor);
    SUITE_ADD_TEST(suite, test_dtl_sv_dv_wrapper);
    SUITE_ADD_TEST(suite, test_dtl_sv_conversions);
+   SUITE_ADD_TEST(suite, test_dtl_sv_non_finite_to_string);
    SUITE_ADD_TEST(suite, test_dtl_sv_lt_comparisons);
    SUITE_ADD_TEST(suite, test_dtl_sv_take_bytes);
    SUITE_ADD_TEST(suite, test_dtl_sv_vlt);
@@ -411,6 +414,22 @@ static void test_dtl_sv_conversions(CuTest *tc)
    ok = true;
    dtl_sv_to_i32(sv, &ok);
    CuAssertTrue(tc, !ok);
+   dtl_dec_ref(sv);
+}
+
+static void test_dtl_sv_non_finite_to_string(CuTest *tc)
+{
+   bool ok = false;
+   dtl_sv_t *sv = dtl_sv_make_dbl(NAN);
+   CuAssertPtrNotNull(tc, sv);
+   CuAssertStrEquals(tc, "nan", dtl_sv_to_cstr(sv, &ok));
+   CuAssertTrue(tc, ok);
+   dtl_dec_ref(sv);
+   ok = false;
+   sv = dtl_sv_make_dbl(INFINITY);
+   CuAssertPtrNotNull(tc, sv);
+   CuAssertStrEquals(tc, "inf", dtl_sv_to_cstr(sv, &ok));
+   CuAssertTrue(tc, ok);
    dtl_dec_ref(sv);
 }
 
