@@ -12,7 +12,7 @@ import subprocess
 project = 'dtl-type'
 copyright = '2026, Conny Gustafsson'
 author = 'Conny Gustafsson'
-release = '0.3.0'
+release = '0.3.1'
 
 # -- General configuration ---------------------------------------------------
 
