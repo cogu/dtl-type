@@ -1,8 +1,10 @@
 ![unit tests](https://github.com/cogu/dtl-type/workflows/unit%20tests/badge.svg)
-
+[![Documentation Status](https://readthedocs.org/projects/dtl-type/badge/?version=latest)](https://dtl-type.readthedocs.io/en/latest/?badge=latest)
 # dtl-type
 
 A lightweight, reference-counted dynamic type and variant library for C.
+
+Online documentation and API reference: **[dtl-type.readthedocs.io](https://dtl-type.readthedocs.io/)**
 
 ## Overview
 
